@@ -21,7 +21,7 @@ class _CardCarouselState extends State<CardCarousel> {
         Expanded(
           child: Padding(
             padding: const EdgeInsets.all(32.0),
-            child: stackBody(),
+            child: CardFlipper(),
           ),
         ),
         Container(
@@ -32,8 +32,11 @@ class _CardCarouselState extends State<CardCarousel> {
       ],
     );
   }
+}
 
-  Stack stackBody() {
+class Card extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
     return Stack(
       fit: StackFit.expand,
       children: <Widget>[
@@ -175,4 +178,49 @@ class _CardCarouselState extends State<CardCarousel> {
       ],
     );
   }
+}
+
+class CardFlipper extends StatefulWidget {
+  @override
+  _CardFlipperState createState() => _CardFlipperState();
+}
+
+class _CardFlipperState extends State<CardFlipper> {
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onHorizontalDragStart: _onHorizontalDragStart,
+      onHorizontalDragUpdate: _onHorizontalDragUpdate,
+      onHorizontalDragEnd: _onHorizontalDragEnd,
+      behavior: HitTestBehavior.translucent,
+      child: Stack(
+        children: _buildCards(),
+      ),
+    );
+  }
+
+  List<Widget> _buildCards() {
+    return [
+      _buildCard(cardCount: 3, cardIndex: 0, scrollPercent: 0.0),
+      _buildCard(cardCount: 3, cardIndex: 1, scrollPercent: 0.0),
+      _buildCard(cardCount: 3, cardIndex: 2, scrollPercent: 0.0),
+    ];
+  }
+
+  Widget _buildCard({int cardIndex, int cardCount, double scrollPercent}) {
+    final cardScrollPercent = scrollPercent / (1 / cardCount);
+    return FractionalTranslation(
+      translation: Offset(cardIndex - cardScrollPercent, 0.0),
+      child: Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Card(),
+      ),
+    );
+  }
+
+  void _onHorizontalDragUpdate(DragUpdateDetails details) {}
+
+  void _onHorizontalDragEnd(DragEndDetails details) {}
+
+  void _onHorizontalDragStart(DragStartDetails details) {}
 }
